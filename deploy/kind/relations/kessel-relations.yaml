@@ -1,0 +1,53 @@
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: relations-api
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: relations-api
+#  template:
+#    metadata:
+#      labels:
+#        app: relations-api
+#    spec:
+#      containers:
+#        - name: relations-api
+#          image: quay.io/redhat-services-prod/project-kessel-tenant/kessel-relations/relations-api:latest
+#          ports:
+#            - containerPort: 9000  # gRPC port
+#            - containerPort: 8000  # HTTP port
+#          env:
+#            - name: SPICEDB_PRESHARED
+#              value: "foobar"
+#          # Liveness Probe
+#          livenessProbe:
+#            httpGet:
+#              path: /api/authz/livez
+#              port: 8000
+#          # Readiness Probe
+#          readinessProbe:
+#            httpGet:
+#              path: /api/authz/readyz
+#              port: 8000
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: relations-api-service
+#  labels:
+#    app: relations-api
+#spec:
+#  selector:
+#    app: relations-api
+#  ports:
+#    - name: grpc
+#      protocol: TCP
+#      port: 9000
+#      targetPort: 9000
+#    - name: http
+#      protocol: TCP
+#      port: 8000
+#      targetPort: 8000
+#  type: ClusterIP

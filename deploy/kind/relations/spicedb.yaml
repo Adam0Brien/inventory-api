@@ -1,0 +1,87 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: spicedb-migration-status
+#  labels:
+#    app: spicedb
+#data:
+#  migration: "incomplete"
+#---
+#apiVersion: batch/v1
+#kind: Job
+#metadata:
+#  name: spicedb-migrate
+#spec:
+#  template:
+#    spec:
+#      containers:
+#        - name: migrate
+#          image: authzed/spicedb
+#          command: ["sh", "-c", "spicedb migrate head && kubectl create configmap spicedb-migration-status --from-literal=migration=complete --dry-run=client -o yaml | kubectl apply -f -"]
+#          env:
+#            - name: SPICEDB_DATASTORE_ENGINE
+#              value: "postgres"
+#            - name: SPICEDB_DATASTORE_CONN_URI
+#              value: "postgres://postgres:yPsw5e6ab4bvAGe5H@spicedb-database.default.svc.cluster.local:5432/spicedb?sslmode=disable"
+#      restartPolicy: OnFailure
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: spicedb
+#  labels:
+#    app: spicedb
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: spicedb
+#  template:
+#    metadata:
+#      labels:
+#        app: spicedb
+#    spec:
+#      initContainers:
+#        - name: wait-for-migrate
+#          image: busybox
+#          command:
+#            [
+#              "sh", "-c",
+#              'until kubectl get configmap spicedb-migration-status -o=jsonpath="{.data.migration}" | grep -q "complete"; do echo "Waiting for migration to complete"; sleep 3; done'
+#            ]
+#      containers:
+#        - name: serve
+#          image: authzed/spicedb
+#          command: ["spicedb", "serve"]
+#          ports:
+#            - containerPort: 8080  # HTTP
+#            - containerPort: 9090  # Metrics
+#            - containerPort: 50051 # gRPC
+#          env:
+#            - name: SPICEDB_GRPC_PRESHARED_KEY
+#              value: "foobar"
+#            - name: SPICEDB_DATASTORE_ENGINE
+#              value: "postgres"
+#            - name: SPICEDB_DATASTORE_CONN_URI
+#              value: "postgres://postgres:yPsw5e6ab4bvAGe5H@spicedb-database.default.svc.cluster.local:5432/spicedb?sslmode=disable"
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: spicedb
+#  labels:
+#    app: spicedb
+#spec:
+#  ports:
+#    - name: grpc
+#      port: 50051
+#      targetPort: 50051
+#    - name: http
+#      port: 8080
+#      targetPort: 8080
+#    - name: metrics
+#      port: 9090
+#      targetPort: 9090
+#  selector:
+#    app: spicedb
+#  type: ClusterIP

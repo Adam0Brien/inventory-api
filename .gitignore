@@ -43,6 +43,8 @@ inventory.db
 inventory-api.tar
 inventory-e2e-tests.tar
 
+relations-api.tar
+
 multicluster-global-hub/
 scripts/kubeconfig-global-hub
 
