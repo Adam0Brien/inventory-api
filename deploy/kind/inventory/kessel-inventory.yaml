@@ -142,13 +142,11 @@ stringData:
       #psk:
           #pre-shared-key-file: /psks.yaml
     authz:
-      impl: allow-all
-      #impl: kessel
-      #kessel:
-        #insecure-client: true
-        #url: http://relationships-service.default.svc.cluster.local:8000
-        #enable-oidc-auth: false
-        #principal-user-domain: http://relationships-service.default.svc.cluster.local:8000
+      impl: kessel
+      kessel:
+        insecure-client: true
+        url: relationships-service.default.svc.cluster.local:9000
+        enable-oidc-auth: false
     eventing:
       eventer: stdout
       kafka:

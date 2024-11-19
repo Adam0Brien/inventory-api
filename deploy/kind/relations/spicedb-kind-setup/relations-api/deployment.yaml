@@ -28,3 +28,12 @@ spec:
                   name: dev-spicedb-config
             - name: SPICEDB_ENDPOINT
               value: spicedb-cr:50051
+            - name: SPICEDB_SCHEMA_FILE
+              value: /etc/schema/schema.zed
+          volumeMounts:
+            - name: schema
+              mountPath: /etc/schema
+      volumes:
+        - name: schema
+          configMap:
+            name: spicedb-schema

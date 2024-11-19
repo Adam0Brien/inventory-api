@@ -7,7 +7,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 8000
+    - port: 9000
   selector:
     app: relationships
 ---
@@ -26,6 +26,6 @@ spec:
               service:
                 name: relationships-service
                 port:
-                  number: 8000
+                  number: 9000
             path: /
             pathType: Prefix

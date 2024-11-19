@@ -46,6 +46,9 @@ kubectl apply -f deploy/kind/relations/spicedb-kind-setup/bundle.yaml
 kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
 kubectl get crd httpproxies.projectcontour.io
 
+# add configmap
+kubectl create configmap spicedb-schema --from-file=deploy/schema.zed
+
 # Deploy SpiceDB and Relations-API in the kessel namespace
 kubectl apply -f deploy/kind/relations/spicedb-kind-setup/postgres/secret.yaml
 kubectl apply -f deploy/kind/relations/spicedb-kind-setup/postgres/postgresql.yaml
