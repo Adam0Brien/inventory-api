@@ -56,4 +56,6 @@ kubectl apply -f deploy/kind/relations/spicedb-kind-setup/relations-api/secret.y
 kubectl apply -f deploy/kind/relations/spicedb-kind-setup/relations-api/deployment.yaml
 kubectl apply -f deploy/kind/relations/spicedb-kind-setup/relations-api/svc.yaml
 
+
+kubectl apply -f deploy/kind/e2e/e2e-batch.yaml
 echo "Setup complete. Inventory API, Relations-API, and SpiceDB are running!"
