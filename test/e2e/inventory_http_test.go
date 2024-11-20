@@ -156,14 +156,14 @@ func TestInventoryAPIHTTP_RHELHostLifecycle(t *testing.T) {
 		RhelHost: &resources.RhelHost{
 			Metadata: &resources.Metadata{
 				ResourceType: "rhel_host",
-				WorkspaceId:  "workspace",
+				WorkspaceId:  "workspace6",
 				OrgId:        "",
 			},
 			ReporterData: &resources.ReporterData{
 				ReporterInstanceId: "user@example.com",
 				ReporterType:       resources.ReporterData_ACM,
-				ConsoleHref:        "www.example.com",
-				ApiHref:            "www.example.com",
+				ConsoleHref:        "www.exampleConsole.com",
+				ApiHref:            "www.exampleAPI.com",
 				LocalResourceId:    "0123",
 				ReporterVersion:    "0.1",
 			},
@@ -176,8 +176,8 @@ func TestInventoryAPIHTTP_RHELHostLifecycle(t *testing.T) {
 		ReporterData: &resources.ReporterData{
 			ReporterInstanceId: "user@example.com",
 			ReporterType:       resources.ReporterData_ACM,
-			ConsoleHref:        "www.example.com",
-			ApiHref:            "www.example.com",
+			ConsoleHref:        "www.exampleConsole.com",
+			ApiHref:            "www.exampleAPI.com",
 			LocalResourceId:    "0123",
 			ReporterVersion:    "0.1",
 		},
@@ -243,25 +243,25 @@ func TestInventoryAPIHTTP_K8SClusterLifecycle(t *testing.T) {
 		K8SCluster: &resources.K8SCluster{
 			Metadata: &resources.Metadata{
 				ResourceType: "k8s_cluster",
-				WorkspaceId:  "workspace1",
+				WorkspaceId:  "workspace7",
 				OrgId:        "",
 			},
 			ResourceData: &resources.K8SClusterDetail{
 				ExternalClusterId: "01234",
-				ClusterStatus:     resources.K8SClusterDetail_READY,
+				ClusterStatus:     resources.K8SClusterDetail_OFFLINE,
 				KubeVersion:       "1.31",
 				KubeVendor:        resources.K8SClusterDetail_OPENSHIFT,
 				VendorVersion:     "4.16",
 				CloudPlatform:     resources.K8SClusterDetail_AWS_UPI,
 				Nodes: []*resources.K8SClusterDetailNodesInner{
 					{
-						Name:   "www.web.com",
+						Name:   "www.website.com",
 						Cpu:    "7500m",
 						Memory: "30973224Ki",
 						Labels: []*resources.ResourceLabel{
 							{
-								Key:   "has_monster_gpu",
-								Value: "no",
+								Key:   "has_a_monster_gpu",
+								Value: "yes",
 							},
 						},
 					},
@@ -310,7 +310,7 @@ func TestInventoryAPIHTTP_K8SPolicyLifecycle(t *testing.T) {
 		K8SPolicy: &resources.K8SPolicy{
 			Metadata: &resources.Metadata{
 				ResourceType: "k8s_policy",
-				WorkspaceId:  "workspace2",
+				WorkspaceId:  "workspace8",
 				OrgId:        "",
 			},
 			ResourceData: &resources.K8SPolicyDetail{
