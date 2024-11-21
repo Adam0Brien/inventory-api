@@ -4,6 +4,7 @@ metadata:
   name: e2e-inventory-http-tests
 spec:
   completions: 1
+  backoffLimit: 0
   template:
     spec:
       initContainers:
@@ -19,6 +20,8 @@ spec:
                 sleep 5
               done
               echo "Inventory service is ready!"
+              
+
       containers:
         - name: e2e-http-tests
           image: localhost/inventory-e2e-tests:e2e-test
@@ -29,4 +32,3 @@ spec:
               value: "localhost:9092"
           command: ["/usr/local/bin/e2e-inventory-tests", "-test.v"]
       restartPolicy: Never
-  backoffLimit: 4
