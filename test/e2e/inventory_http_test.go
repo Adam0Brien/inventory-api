@@ -242,25 +242,25 @@ func TestInventoryAPIHTTP_K8SClusterLifecycle(t *testing.T) {
 		K8SCluster: &resources.K8SCluster{
 			Metadata: &resources.Metadata{
 				ResourceType: "k8s_cluster",
-				WorkspaceId:  "workspace7",
+				WorkspaceId:  "workspace1",
 				OrgId:        "",
 			},
 			ResourceData: &resources.K8SClusterDetail{
 				ExternalClusterId: "01234",
-				ClusterStatus:     resources.K8SClusterDetail_OFFLINE,
+				ClusterStatus:     resources.K8SClusterDetail_READY,
 				KubeVersion:       "1.31",
 				KubeVendor:        resources.K8SClusterDetail_OPENSHIFT,
 				VendorVersion:     "4.16",
 				CloudPlatform:     resources.K8SClusterDetail_AWS_UPI,
 				Nodes: []*resources.K8SClusterDetailNodesInner{
 					{
-						Name:   "www.website.com",
+						Name:   "www.web.com",
 						Cpu:    "7500m",
 						Memory: "30973224Ki",
 						Labels: []*resources.ResourceLabel{
 							{
-								Key:   "has_a_monster_gpu",
-								Value: "yes",
+								Key:   "has_monster_gpu",
+								Value: "no",
 							},
 						},
 					},
