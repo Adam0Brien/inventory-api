@@ -19,7 +19,6 @@ RUN go mod download
 COPY api ./api
 COPY cmd ./cmd
 COPY internal ./internal
-COPY eventing ./eventing
 COPY main.go Makefile ./
 
 ARG VERSION
