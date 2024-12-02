@@ -1,4 +1,4 @@
-package grpc
+package e2e
 
 import (
 	"context"
