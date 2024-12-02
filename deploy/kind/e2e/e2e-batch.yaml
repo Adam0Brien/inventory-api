@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: inventory-e2e-tests
+  name: e2e-inventory-http-tests
 spec:
   completions: 1
   backoffLimit: 0
