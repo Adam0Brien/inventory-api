@@ -201,6 +201,18 @@ func TransformMiddleware() middleware.Middleware {
 						} else {
 							resource = deleteNotificationIntegrationResource(integrationPayload)
 						}
+					case "/api/inventory/v1beta1/resources/edge_device":
+						var edgeDevicePayload EdgeDevicePayload
+						if err := json.Unmarshal(body, &edgeDevicePayload); err != nil {
+							return nil, err
+						}
+						if method == "POST" {
+							resource = createEdgeDeviceResource(edgeDevicePayload)
+						} else if method == "PUT" {
+							resource = updateEdgeDeviceResource(edgeDevicePayload)
+						} else {
+							resource = deleteEdgeDeviceResource(edgeDevicePayload)
+						}
 
 					case "/api/inventory/v1beta1/resource-relationships/k8s-policy_is-propagated-to_k8s-cluster":
 						return handler(ctx, body)
@@ -435,4 +447,134 @@ func deleteNotificationIntegrationResource(payload IntegrationPayload) *pb.Delet
 			ReporterData: reporterData,
 		},
 	}
+}
+
+// EdgeDevicePayload struct for handling edge device JSON payloads
+type EdgeDevicePayload struct {
+	EdgeDevice struct {
+		Metadata struct {
+			ResourceType string `json:"resource_type"`
+			WorkspaceID  string `json:"workspace_id"`
+		} `json:"metadata"`
+		ReporterData struct {
+			ReporterType    string `json:"reporter_type"`
+			ReporterVersion string `json:"reporter_version"`
+			LocalResourceID string `json:"local_resource_id"`
+			ConsoleHref     string `json:"console_href"`
+			ApiHref         string `json:"api_href"`
+		} `json:"reporter_data"`
+		ResourceData struct {
+			DeviceID        string `json:"device_id"`
+			Location        string `json:"location"`
+			FirmwareVersion string `json:"firmware_version"`
+		} `json:"resource_data"`
+	} `json:"edge_device"`
+}
+
+func createEdgeDeviceResource(payload EdgeDevicePayload) *pb.CreateResourceRequest {
+	reporterData, _ := createEdgeDeviceReporterData(struct {
+		ReporterType    string `json:"reporter_type"`
+		ReporterVersion string `json:"reporter_version"`
+		LocalResourceID string `json:"local_resource_id"`
+		ConsoleHref     string `json:"console_href"`
+		ApiHref         string `json:"api_href"`
+	}{
+		ReporterType:    payload.EdgeDevice.ReporterData.ReporterType,
+		ReporterVersion: payload.EdgeDevice.ReporterData.ReporterVersion,
+		LocalResourceID: payload.EdgeDevice.ReporterData.LocalResourceID,
+		ConsoleHref:     payload.EdgeDevice.ReporterData.ConsoleHref,
+		ApiHref:         payload.EdgeDevice.ReporterData.ApiHref,
+	})
+
+	resourceData, _ := structpb.NewStruct(map[string]interface{}{
+		"device_id":        payload.EdgeDevice.ResourceData.DeviceID,
+		"location":         payload.EdgeDevice.ResourceData.Location,
+		"firmware_version": payload.EdgeDevice.ResourceData.FirmwareVersion,
+	})
+
+	return &pb.CreateResourceRequest{
+		Resource: &pb.Resource{
+			Metadata: &pb.Metadata{
+				ResourceType: payload.EdgeDevice.Metadata.ResourceType,
+				WorkspaceId:  payload.EdgeDevice.Metadata.WorkspaceID,
+			},
+			ReporterData: reporterData,
+			ResourceData: resourceData,
+		},
+	}
+}
+
+func updateEdgeDeviceResource(payload EdgeDevicePayload) *pb.UpdateResourceRequest {
+	reporterData, _ := createEdgeDeviceReporterData(struct {
+		ReporterType    string `json:"reporter_type"`
+		ReporterVersion string `json:"reporter_version"`
+		LocalResourceID string `json:"local_resource_id"`
+		ConsoleHref     string `json:"console_href"`
+		ApiHref         string `json:"api_href"`
+	}{
+		ReporterType:    payload.EdgeDevice.ReporterData.ReporterType,
+		ReporterVersion: payload.EdgeDevice.ReporterData.ReporterVersion,
+		LocalResourceID: payload.EdgeDevice.ReporterData.LocalResourceID,
+		ConsoleHref:     payload.EdgeDevice.ReporterData.ConsoleHref,
+		ApiHref:         payload.EdgeDevice.ReporterData.ApiHref,
+	})
+
+	resourceData, _ := structpb.NewStruct(map[string]interface{}{
+		"device_id":        payload.EdgeDevice.ResourceData.DeviceID,
+		"location":         payload.EdgeDevice.ResourceData.Location,
+		"firmware_version": payload.EdgeDevice.ResourceData.FirmwareVersion,
+	})
+
+	return &pb.UpdateResourceRequest{
+		Resource: &pb.Resource{
+			Metadata: &pb.Metadata{
+				ResourceType: payload.EdgeDevice.Metadata.ResourceType,
+				WorkspaceId:  payload.EdgeDevice.Metadata.WorkspaceID,
+			},
+			ReporterData: reporterData,
+			ResourceData: resourceData,
+		},
+	}
+}
+
+func deleteEdgeDeviceResource(payload EdgeDevicePayload) *pb.DeleteResourceRequest {
+	reporterData, _ := createEdgeDeviceReporterData(struct {
+		ReporterType    string `json:"reporter_type"`
+		ReporterVersion string `json:"reporter_version"`
+		LocalResourceID string `json:"local_resource_id"`
+		ConsoleHref     string `json:"console_href"`
+		ApiHref         string `json:"api_href"`
+	}{
+		ReporterType:    payload.EdgeDevice.ReporterData.ReporterType,
+		ReporterVersion: payload.EdgeDevice.ReporterData.ReporterVersion,
+		LocalResourceID: payload.EdgeDevice.ReporterData.LocalResourceID,
+		ConsoleHref:     payload.EdgeDevice.ReporterData.ConsoleHref,
+		ApiHref:         payload.EdgeDevice.ReporterData.ApiHref,
+	})
+
+	return &pb.DeleteResourceRequest{
+		Resource: &pb.Resource{
+			Metadata: &pb.Metadata{
+				ResourceType: payload.EdgeDevice.Metadata.ResourceType,
+				WorkspaceId:  payload.EdgeDevice.Metadata.WorkspaceID,
+			},
+			ReporterData: reporterData,
+		},
+	}
+}
+
+func createEdgeDeviceReporterData(reporter struct {
+	ReporterType    string `json:"reporter_type"`
+	ReporterVersion string `json:"reporter_version"`
+	LocalResourceID string `json:"local_resource_id"`
+	ConsoleHref     string `json:"console_href"`
+	ApiHref         string `json:"api_href"`
+}) (*structpb.Struct, error) {
+	return structpb.NewStruct(map[string]interface{}{
+		"reporter_type":     reporter.ReporterType,
+		"reporter_version":  reporter.ReporterVersion,
+		"local_resource_id": reporter.LocalResourceID,
+		"console_href":      reporter.ConsoleHref,
+		"api_href":          reporter.ApiHref,
+	})
 }

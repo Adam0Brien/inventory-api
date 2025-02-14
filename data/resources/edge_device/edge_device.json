@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "device_id": { "type": "string" },
+    "location": { "type": "string" },
+    "firmware_version": { "type": "string" }
+  },
+  "required": [
+    "device_id",
+    "location",
+    "firmware_version"
+  ]
+}

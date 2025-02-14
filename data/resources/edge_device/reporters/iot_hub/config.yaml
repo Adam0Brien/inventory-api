@@ -1,0 +1,4 @@
+---
+resource_type: edge_device
+reporter_name: iot_hub
+namespace: iot_hub
