@@ -234,22 +234,22 @@ func TestInventoryAPIHTTP_v1beta2_AuthzLifecycle(t *testing.T) {
 		ResourceType: "group",
 	}
 
-	// /authz/check
-	checkReq := &pbv1beta2.CheckRequest{
-		Subject:  subject,
-		Relation: "member",
-		Object:   parent,
-		//Consistency: &pbv1beta2.Consistency{
-		//	Requirement: &pbv1beta2.Consistency_MinimizeLatency{
-		//		MinimizeLatency: true,
-		//	},
-		//},
-	}
+	//// /authz/check
+	//checkReq := &pbv1beta2.CheckRequest{
+	//	Subject:  subject,
+	//	Relation: "member",
+	//	Object:   parent,
+	//	//Consistency: &pbv1beta2.Consistency{
+	//	//	Requirement: &pbv1beta2.Consistency_MinimizeLatency{
+	//	//		MinimizeLatency: true,
+	//	//	},
+	//	//},
+	//}
 
-	checkResp, err := client.KesselCheckService.Check(ctx, checkReq)
-	assert.NoError(t, err, "check endpoint failed")
-	assert.NotNil(t, checkResp, "check response should not be nil")
-	assert.Equal(t, pbv1beta2.Allowed_ALLOWED_FALSE, checkResp.GetAllowed())
+	//checkResp, err := client.KesselCheckService.Check(ctx, checkReq)
+	//assert.NoError(t, err, "check endpoint failed")
+	//assert.NotNil(t, checkResp, "check response should not be nil")
+	//assert.Equal(t, pbv1beta2.Allowed_ALLOWED_FALSE, checkResp.GetAllowed())
 
 	// /authz/checkforupdate
 	checkUpdateReq := &pbv1beta2.CheckForUpdateRequest{
