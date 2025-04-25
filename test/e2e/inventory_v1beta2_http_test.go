@@ -239,6 +239,11 @@ func TestInventoryAPIHTTP_v1beta2_AuthzLifecycle(t *testing.T) {
 		Subject:  subject,
 		Relation: "member",
 		Object:   parent,
+		Consistency: &pbv1beta2.Consistency{
+			Requirement: &pbv1beta2.Consistency_MinimizeLatency{
+				MinimizeLatency: true,
+			},
+		},
 	}
 
 	checkResp, err := client.KesselCheckService.Check(ctx, checkReq)
