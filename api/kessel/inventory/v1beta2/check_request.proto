@@ -19,5 +19,5 @@ message CheckRequest {
   ResourceReference object = 1 [(buf.validate.field).required = true];
   string relation = 2 [(buf.validate.field).string.min_len = 1];
   SubjectReference subject = 3 [(buf.validate.field).required = true];
-  Consistency consistency = 4;
+  //Consistency consistency = 4;
 }
