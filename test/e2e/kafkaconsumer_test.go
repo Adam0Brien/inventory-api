@@ -1,3 +1,6 @@
+//go:build e2e
+// +build e2e
+
 package e2e
 
 import (
@@ -113,6 +116,9 @@ func ensureTopicExists(adminClient *kafka.AdminClient, topic string) error {
 
 // Test_ACMKafkaConsumer reads events from a Kafka topic and verifies their schema.
 func Test_ACMKafkaConsumer(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 	kafkaBootstrapServers := getEnvOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 	kafkaSecProtocol := os.Getenv("KAFKA_SECURITY_PROTOCOL")

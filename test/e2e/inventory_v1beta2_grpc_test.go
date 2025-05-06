@@ -1,3 +1,6 @@
+//go:build e2e
+// +build e2e
+
 package e2e
 
 import (
@@ -30,6 +33,9 @@ func (b *bearerAuth) RequireTransportSecurity() bool {
 
 // V1Beta2
 func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_Host(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 
 	ctx := context.Background()
@@ -100,6 +106,9 @@ func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_Host(t *testing.T) {
 }
 
 func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_Notifications(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 
 	ctx := context.Background()
@@ -170,6 +179,9 @@ func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_Notifications(t *testing.T) 
 }
 
 func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_K8S_Cluster(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 
 	ctx := context.Background()
@@ -243,6 +255,9 @@ func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_K8S_Cluster(t *testing.T) {
 }
 
 func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_K8S_Policy(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 
 	ctx := context.Background()
@@ -368,6 +383,9 @@ func TestInventoryAPIHTTP_v1beta2_ResourceLifecycle_K8S_Policy(t *testing.T) {
 //}
 
 func TestInventoryAPIHTTP_v1beta2_Host_WaitForSync(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping long-running test in short mode")
+	}
 	t.Parallel()
 
 	resourceId := "wait-for-sync-host-abc-123"
