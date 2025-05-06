@@ -25,14 +25,15 @@ jobs:
         run: go get ./...
         shell: bash
 
-      - name: Run v1beta2 Unit Tests
+      - name: Run v1beta2 Unit Tests (precise coverage)
         run: |
-          echo "Running unit tests for v1beta2..."
-          go test -short -skip 'TestInventoryAPIGRPC_*|TestInventoryAPIHTTP_*|Test_ACMKafkaConsumer' \
-            -covermode=atomic \
-            -coverpkg=./api/kessel/inventory/v1beta2/... \
+          echo "Running v1beta2 unit tests..."
+          COVERPKG=$(go list -deps ./api/kessel/inventory/v1beta2/... ./internal/service/resources | grep 'github.com/project-kessel/inventory-api' | paste -sd "," -)
+          echo "COVERPKG: $COVERPKG"
+          go test -short -covermode=atomic \
+            -coverpkg=$COVERPKG \
             -coverprofile=v1beta2-coverage.out \
-            ./...
+            ./api/kessel/inventory/v1beta2/... ./internal/service/resources
         shell: bash
 
       - name: Upload v1beta2 Coverage Report
