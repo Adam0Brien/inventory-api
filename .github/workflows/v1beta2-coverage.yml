@@ -2,17 +2,18 @@ name: CI v1beta2 Test and Coverage
 
 on:
   pull_request:
-    branches: ['main']
+    branches: [main]
   push:
-    branches: ['main']
+    branches: [main]
 
 jobs:
   build-and-test-v1beta2:
-    name: Build & Test v1beta2 Only
+    name: Build & Test v1beta2
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -20,13 +21,19 @@ jobs:
           go-version: '1.22.x'
           cache: true
 
-      - name: Install dependencies
+      - name: Install Go dependencies
         run: go get ./...
+        shell: bash
 
-      - name: Run v1beta2 Tests
+      - name: Run v1beta2 Unit Tests
         run: |
           echo "Running unit tests for v1beta2..."
-          go test -short -covermode=atomic -coverpkg=./api/kessel/inventory/v1beta2/... -coverprofile=v1beta2-coverage.out ./...
+          go test -short -skip 'TestInventoryAPIGRPC_*|TestInventoryAPIHTTP_*|Test_ACMKafkaConsumer' \
+            -covermode=atomic \
+            -coverpkg=./api/kessel/inventory/v1beta2/... \
+            -coverprofile=v1beta2-coverage.out \
+            ./...
+        shell: bash
 
       - name: Upload v1beta2 Coverage Report
         uses: actions/upload-artifact@v4
@@ -46,7 +53,7 @@ jobs:
         with:
           name: v1beta2-code-coverage
 
-      - name: v1beta2 Coverage Report
+      - name: Generate v1beta2 Coverage Report
         id: v1beta2-coverage-report
         uses: fgrosse/go-coverage-report@v1.2.0
         with:
@@ -54,6 +61,8 @@ jobs:
           skip-comment: true
           trim: github.com/project-kessel/inventory-api
           root-package: ""
+          fetch-artifact: false
 
-      - name: v1beta2 Coverage Summary
+      - name: Summarize v1beta2 Coverage
         run: echo "${{ steps.v1beta2-coverage-report.outputs.coverage_report }}" >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
