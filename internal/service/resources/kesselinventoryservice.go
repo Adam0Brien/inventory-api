@@ -82,7 +82,7 @@ func (s *InventoryService) Check(ctx context.Context, req *pb.CheckRequest) (*pb
 				Id: req.GetSubject().Resource.GetResourceId(),
 			},
 		}, *resource); err == nil {
-			return viewResponseFromAuthzRequestV1beta2(resp), nil
+			return ViewResponseFromAuthzRequestV1beta2(resp), nil
 		} else {
 			return nil, err
 		}
@@ -199,7 +199,7 @@ func authzFromRequestV1beta2(identity *authnapi.Identity, resource *pb.ResourceR
 	}, nil
 }
 
-func viewResponseFromAuthzRequestV1beta2(allowed bool) *pb.CheckResponse {
+func ViewResponseFromAuthzRequestV1beta2(allowed bool) *pb.CheckResponse {
 	if allowed {
 		return &pb.CheckResponse{Allowed: pb.Allowed_ALLOWED_TRUE}
 	} else {

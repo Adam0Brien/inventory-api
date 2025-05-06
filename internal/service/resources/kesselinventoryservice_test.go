@@ -1,20 +1,20 @@
 package resources_test
 
 import (
+	"github.com/project-kessel/inventory-api/api/kessel/inventory/v1beta2"
 	"testing"
 
-	"github.com/project-kessel/inventory-api/internal/biz/resources"
 	service "github.com/project-kessel/inventory-api/internal/service/resources"
 )
 
-func TestNewKesselInventoryServiceV1beta2(t *testing.T) {
-	mockUsecase := &resources.Usecase{}
-	svc := service.NewKesselInventoryServiceV1beta2(mockUsecase)
-
-	if svc == nil {
-		t.Fatal("expected InventoryService instance, got nil")
+func TestViewResponseFromAuthzRequestV1beta2(t *testing.T) {
+	resp := service.ViewResponseFromAuthzRequestV1beta2(true)
+	if resp.Allowed != v1beta2.Allowed_ALLOWED_TRUE {
+		t.Errorf("expected Allowed_TRUE, got %v", resp.Allowed)
 	}
-	if svc.Ctl != mockUsecase {
-		t.Fatal("expected Usecase to be assigned")
+
+	resp = service.ViewResponseFromAuthzRequestV1beta2(false)
+	if resp.Allowed != v1beta2.Allowed_ALLOWED_FALSE {
+		t.Errorf("expected Allowed_FALSE, got %v", resp.Allowed)
 	}
 }
