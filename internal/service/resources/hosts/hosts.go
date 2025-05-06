@@ -35,7 +35,7 @@ func (c *HostsService) CreateRhelHost(ctx context.Context, r *pb.CreateRhelHostR
 		return nil, err
 	}
 
-	if h, err := hostFromCreateRequest(r, identity); err == nil {
+	if h, err := HostFromCreateRequest(r, identity); err == nil {
 		if resp, err := c.Ctl.Create(ctx, h); err == nil {
 			return createResponseFromHost(resp), nil
 		} else {
@@ -80,7 +80,7 @@ func (c *HostsService) DeleteRhelHost(ctx context.Context, r *pb.DeleteRhelHostR
 	}
 }
 
-func hostFromCreateRequest(r *pb.CreateRhelHostRequest, identity *authnapi.Identity) (*model.Resource, error) {
+func HostFromCreateRequest(r *pb.CreateRhelHostRequest, identity *authnapi.Identity) (*model.Resource, error) {
 	return conv.ResourceFromPbv1beta1(ResourceType, identity.Principal, nil, r.RhelHost.Metadata, r.RhelHost.ReporterData), nil
 }
 
