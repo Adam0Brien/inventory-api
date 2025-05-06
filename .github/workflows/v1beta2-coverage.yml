@@ -1,4 +1,4 @@
-name: CI v1beta2 Test and Coverage
+name: v1beta2 unit test coverage
 
 on:
   pull_request:
@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build-test-and-coverage-v1beta2:
-    name: Build, Test, and Coverage v1beta2
+  v1beta2-unit-test-coverage:
+    name: v1beta2 unit test coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,7 @@ jobs:
       - name: Run v1beta2 Unit Tests (precise coverage)
         run: |
           echo "Running v1beta2 unit tests..."
-          COVERPKG=$(go list -deps ./api/kessel/inventory/v1beta2/... ./internal/service/resources | grep 'github.com/project-kessel/inventory-api' | paste -sd "," -)
+          COVERPKG=$(go list -deps ./api/kessel/inventory/v1beta2/... ./internal/service/resources | grep 'github.com/project-kessel/inventory-api' | grep -v '/v1beta1/' | paste -sd "," -)
           echo "COVERPKG: $COVERPKG"
           go test -short -covermode=atomic \
             -coverpkg=$COVERPKG \
@@ -38,15 +38,17 @@ jobs:
 
       - name: Summarize v1beta2 Coverage
         run: |
-          cd $GITHUB_WORKSPACE
-          echo "### Merging this branch will **increase** overall coverage" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "<details>" >> "$GITHUB_STEP_SUMMARY"
-          echo "<summary>Coverage by file</summary>" >> "$GITHUB_STEP_SUMMARY"
+          echo "<summary>Coverage by function (top level)</summary>" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          go tool cover -func=v1beta2-coverage.out >> "$GITHUB_STEP_SUMMARY"
+
+          go tool cover -func=v1beta2-coverage.out | grep -vE "(total:|\.pb\.go:)" >> "$GITHUB_STEP_SUMMARY"
+
           echo "</details>" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
+
           echo "### Total Coverage:" >> "$GITHUB_STEP_SUMMARY"
           go tool cover -func=v1beta2-coverage.out | grep total | awk '{print "**"$3"**"}' | tee -a "$GITHUB_STEP_SUMMARY"
         shell: bash
+
+
