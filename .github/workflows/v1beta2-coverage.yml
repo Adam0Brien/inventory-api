@@ -1,4 +1,4 @@
-name: CI v1beta2 Test and Coverage
+name: v1beta2 unit test coverage
 
 on:
   pull_request:
@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test-v1beta2:
-    name: Build & Test v1beta2
+  v1beta2-unit-test-coverage:
+    name: v1beta2 unit test coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -25,45 +25,30 @@ jobs:
         run: go get ./...
         shell: bash
 
-      - name: Run v1beta2 Unit Tests
+      - name: Run v1beta2 Unit Tests (precise coverage)
         run: |
-          echo "Running unit tests for v1beta2..."
-          go test -short -skip 'TestInventoryAPIGRPC_*|TestInventoryAPIHTTP_*|Test_ACMKafkaConsumer' \
-            -covermode=atomic \
-            -coverpkg=./api/kessel/inventory/v1beta2/... \
+          echo "Running v1beta2 unit tests..."
+          COVERPKG=$(go list -deps ./api/kessel/inventory/v1beta2/... ./internal/service/resources | grep 'github.com/project-kessel/inventory-api' | grep -v '/v1beta1/' | paste -sd "," -)
+          echo "COVERPKG: $COVERPKG"
+          go test -short -covermode=atomic \
+            -coverpkg=$COVERPKG \
             -coverprofile=v1beta2-coverage.out \
-            ./...
+            ./api/kessel/inventory/v1beta2/... ./internal/service/resources
         shell: bash
-
-      - name: Upload v1beta2 Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: v1beta2-code-coverage
-          path: v1beta2-coverage.out
-
-  v1beta2-coverage-summary:
-    name: v1beta2 Coverage Summary
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    needs: build-and-test-v1beta2
-
-    steps:
-      - name: Download v1beta2 Coverage Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: v1beta2-code-coverage
-
-      - name: Generate v1beta2 Coverage Report
-        id: v1beta2-coverage-report
-        uses: fgrosse/go-coverage-report@v1.2.0
-        with:
-          coverage-file-name: v1beta2-coverage.out
-          coverage-artifact-name: v1beta2-code-coverage
-          skip-comment: true
-          trim: github.com/project-kessel/inventory-api
-          root-package: ""
-          fetch-artifact: false
 
       - name: Summarize v1beta2 Coverage
-        run: echo "${{ steps.v1beta2-coverage-report.outputs.coverage_report }}" >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          echo "<details>" >> "$GITHUB_STEP_SUMMARY"
+          echo "<summary>Coverage by function (top level)</summary>" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          go tool cover -func=v1beta2-coverage.out | grep -vE "(total:|\.pb\.go:)" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "</details>" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Total Coverage:" >> "$GITHUB_STEP_SUMMARY"
+          go tool cover -func=v1beta2-coverage.out | grep total | awk '{print "**"$3"**"}' | tee -a "$GITHUB_STEP_SUMMARY"
         shell: bash
+
+
