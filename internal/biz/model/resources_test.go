@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"testing"
 
-	_ "github.com/google/uuid"
 	"github.com/project-kessel/inventory-api/internal/biz/model"
 	"github.com/stretchr/testify/assert"
 )
