@@ -58,6 +58,7 @@ jobs:
         uses: fgrosse/go-coverage-report@v1.2.0
         with:
           coverage-file-name: v1beta2-coverage.out
+          coverage-artifact-name: v1beta2-code-coverage
           skip-comment: true
           trim: github.com/project-kessel/inventory-api
           root-package: ""
