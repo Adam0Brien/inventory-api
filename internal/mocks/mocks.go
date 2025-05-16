@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/uuid"
-	"github.com/project-kessel/inventory-api/api/kessel/inventory/v1beta2"
 	"github.com/project-kessel/inventory-api/internal/pubsub"
 	"google.golang.org/grpc/metadata"
 	"io"
@@ -184,10 +183,10 @@ func (m *MockAuthz) Check(ctx context.Context, namespace string, permission stri
 	return args.Get(0).(v1beta1.CheckResponse_Allowed), args.Get(1).(*v1beta1.ConsistencyToken), args.Error(2)
 }
 
-func (m *MockAuthz) v1beta2Check(ctx context.Context, namespace string, permission string, res *model.Resource, sub *v1beta2.SubjectReference) (v1beta2.Allowed, *v1beta1.ConsistencyToken, error) {
-	args := m.Called(ctx, namespace, permission, res, sub)
-	return args.Get(0).(v1beta2.Allowed), args.Get(1).(*v1beta1.ConsistencyToken), args.Error(2)
-}
+//func (m *MockAuthz) v1beta2Check(ctx context.Context, namespace string, permission string, res *model.Resource, sub *v1beta2.SubjectReference) (v1beta2.Allowed, *v1beta1.ConsistencyToken, error) {
+//	args := m.Called(ctx, namespace, permission, res, sub)
+//	return args.Get(0).(v1beta2.Allowed), args.Get(1).(*v1beta1.ConsistencyToken), args.Error(2)
+//}
 
 func (m *MockAuthz) CheckForUpdate(ctx context.Context, namespace string, permission string, res *model.Resource, sub *v1beta1.SubjectReference) (v1beta1.CheckForUpdateResponse_Allowed, *v1beta1.ConsistencyToken, error) {
 	args := m.Called(ctx, namespace, permission, res, sub)
