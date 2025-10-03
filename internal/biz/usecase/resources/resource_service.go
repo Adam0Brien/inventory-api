@@ -12,6 +12,7 @@ import (
 	"github.com/project-kessel/inventory-api/api/kessel/inventory/v1beta2"
 	"github.com/project-kessel/inventory-api/cmd/common"
 	authzapi "github.com/project-kessel/inventory-api/internal/authz/api"
+	"github.com/project-kessel/inventory-api/internal/biz"
 	"github.com/project-kessel/inventory-api/internal/biz/model"
 	"github.com/project-kessel/inventory-api/internal/biz/model_legacy"
 	"github.com/project-kessel/inventory-api/internal/data"
@@ -82,6 +83,17 @@ type Usecase struct {
 	Server                           server.Server
 	ListenManager                    pubsub.ListenManagerImpl
 	Config                           *UsecaseConfig
+}
+
+// NewUsecase creates a new Usecase with minimal required dependencies for consumer usage
+func NewUsecase(db *gorm.DB, logger *log.Helper) *Usecase {
+	transactionManager := data.NewGormTransactionManager(3) // Default retry count
+	resourceRepo := data.NewResourceRepository(db, transactionManager)
+
+	return &Usecase{
+		resourceRepository: resourceRepo,
+		Log:                logger,
+	}
 }
 
 func New(resourceRepository data.ResourceRepository, reporterResourceRepository ReporterResourceRepository, inventoryResourceRepository InventoryResourceRepository,
@@ -191,7 +203,7 @@ func (uc *Usecase) Delete(reporterResourceKey model.ReporterResourceKey) error {
 				if err != nil {
 					return fmt.Errorf("failed to delete resource: %w", err)
 				}
-				return uc.resourceRepository.Save(tx, *res, model_legacy.OperationTypeDeleted, txidStr)
+				return uc.resourceRepository.Save(tx, *res, biz.OperationTypeDeleted, txidStr)
 			} else {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					return ErrResourceNotFound
@@ -305,7 +317,7 @@ func (uc *Usecase) createResource(tx *gorm.DB, request *v1beta2.ReportResourceRe
 		return err
 	}
 
-	return uc.resourceRepository.Save(tx, resource, model_legacy.OperationTypeCreated, txidStr)
+	return uc.resourceRepository.Save(tx, resource, biz.OperationTypeCreated, txidStr)
 }
 
 func getReporterResourceKeyFromRequest(request *v1beta2.ReportResourceRequest) (model.ReporterResourceKey, error) {
@@ -356,7 +368,7 @@ func (uc *Usecase) updateResource(tx *gorm.DB, request *v1beta2.ReportResourceRe
 		return fmt.Errorf("failed to update resource: %w", err)
 	}
 
-	return uc.resourceRepository.Save(tx, *existingResource, model_legacy.OperationTypeUpdated, txidStr)
+	return uc.resourceRepository.Save(tx, *existingResource, biz.OperationTypeUpdated, txidStr)
 }
 
 func extractUpdateDataFromRequest(request *v1beta2.ReportResourceRequest) (
